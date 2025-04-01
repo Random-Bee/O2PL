@@ -4,7 +4,6 @@ using namespace std;
 using namespace chrono;
 typedef long long ll;
 
-// Enum for read and  write
 enum class Operation {
     READ,
     WRITE
@@ -119,6 +118,7 @@ public:
                 }
             }
         }
+        cout << "Transaction " << t->id << " committed" << endl;
         for (auto& [item_id, v] : t->operations) {
             for(int i=0; i<v.size(); i++) {
                 ll ctr = v[i].first;
@@ -134,5 +134,79 @@ public:
     }
 };
 
-int main() {
+O2PL* o2pl = nullptr;
+
+ll n, m;
+
+vector<tuple<ll,char,ll>> ops;
+vector<bool> done;
+
+void work(ll tid) {
+    ll i = 0;
+    Transaction* t = new Transaction();
+    t->id = tid;
+    while(i<done.size()) {
+        auto [tid1, op, iid] = ops[i];
+        if(tid1 == tid) {
+            if(op=='c') {
+                done[i] = true;
+                o2pl->tryCommit(t);
+            }
+            else {
+                ll loc = (i*tid)^i;
+                if(op=='r') {
+                    o2pl->read(t, iid, loc);
+                }
+                else {
+                    o2pl->write(t, iid, loc);
+                }
+                cout << "Thread " << tid << " done with operation " << op << " " << iid << endl;
+                done[i] = true;
+            }
+        }
+        while(!done[i]);
+        i++;
+    }
+
+    delete t;
+}
+
+int main(int argc, char* argv[]) {
+    ll lines;
+
+    string inp = argv[1];
+
+    FILE* f = fopen(inp.c_str(), "r");
+    fscanf(f, "%lld %lld %lld", &n, &m, &lines);
+
+    o2pl = new O2PL(m);
+
+    for(int i=0; i<lines; i++) {
+        ll tid, iid;
+        char op;
+        fscanf(f, "%lld %c", &tid, &op);
+
+        if(op=='c') {
+            ops.push_back({tid, op, -1});
+        }
+        else {
+            fscanf(f, "%lld", &iid);
+            ops.push_back({tid, op, iid});
+        }
+        done.push_back(false);
+    }
+
+    vector<thread> threads;
+
+    for(int i=0; i<n; i++) {
+        threads.push_back(thread(work, i));
+    }
+
+    for(int i=0; i<n; i++) {
+        threads[i].join();
+    }
+
+    delete o2pl;
+
+    return 0;
 }
