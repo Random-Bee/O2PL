@@ -14,6 +14,10 @@ public:
     ll id;
     // // Map of item id to pair of operatin id and operation type
     map<ll, vector<pair<ll, Operation>>> operations;
+
+    Transaction(ll id) {
+        this->id = id;
+    }
 };
 
 class Item {
@@ -69,12 +73,12 @@ public:
         }
     }
 
-    void read(Transaction* t, ll item_id, ll& loc) {
+    void read(Transaction* t, ll item_id, ll& locVal) {
         ll op_ctr = get_op_ctr(item_id, Operation::READ);
 
         while (op_ctr > items[item_id]->write_item_ctr);
 
-        loc = items[item_id]->val;
+        locVal = items[item_id]->val;
 
         t->operations[item_id].push_back({op_ctr, Operation::READ});
 
@@ -143,8 +147,8 @@ vector<bool> done;
 
 void work(ll tid) {
     ll i = 0;
-    Transaction* t = new Transaction();
-    t->id = tid;
+    Transaction* t = new Transaction(tid);
+
     while(i<done.size()) {
         auto [tid1, op, iid] = ops[i];
         if(tid1 == tid) {
@@ -153,12 +157,12 @@ void work(ll tid) {
                 o2pl->tryCommit(t);
             }
             else {
-                ll loc = (i*tid)^i;
+                ll locVal = (i*tid)^i;
                 if(op=='r') {
-                    o2pl->read(t, iid, loc);
+                    o2pl->read(t, iid, locVal);
                 }
                 else {
-                    o2pl->write(t, iid, loc);
+                    o2pl->write(t, iid, locVal);
                 }
                 cout << "Thread " << tid << " done with operation " << op << " " << iid << endl;
                 done[i] = true;
@@ -182,7 +186,7 @@ int main(int argc, char* argv[]) {
     o2pl = new O2PL(m);
 
     for(int i=0; i<lines; i++) {
-        ll tid, iid;
+        ll tid, item_idx;
         char op;
         fscanf(f, "%lld %c", &tid, &op);
 
@@ -190,8 +194,8 @@ int main(int argc, char* argv[]) {
             ops.push_back({tid, op, -1});
         }
         else {
-            fscanf(f, "%lld", &iid);
-            ops.push_back({tid, op, iid});
+            fscanf(f, "%lld", &item_idx);
+            ops.push_back({tid, op, item_idx});
         }
         done.push_back(false);
     }
