@@ -178,6 +178,11 @@ void work(ll tid) {
 int main(int argc, char* argv[]) {
     ll lines;
 
+    if(argc != 2) {
+        cout << "Usage: " << argv[0] << " <input_file>" << endl;
+        return 1;
+    }
+
     string inp = argv[1];
 
     FILE* f = fopen(inp.c_str(), "r");
