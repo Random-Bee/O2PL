@@ -22,7 +22,7 @@ O2PL has 2 variants:
 To compile:
 
 ```bash
-g++ Source-CO21BTECH11002-O2PL-FileInput.cpp -o O2PL_FileInput
+g++ O2PL-FileInput.cpp -o O2PL_FileInput
 ```
 
 To run the program:
@@ -46,7 +46,7 @@ Where `<operation>` is either `r` or `w` (without quotes).
 To compile:
 
 ```bash
-g++ Source-CO21BTECH11002-O2PL.cpp -o O2PL
+g++ O2PL.cpp -o O2PL
 ```
 
 To run the program:
@@ -75,7 +75,7 @@ Where:
 To compile:
 
 ```bash
-g++ Source-CO21BTECH11002-SS2PL.cpp -o SS2PL
+g++ SS2PL.cpp -o SS2PL
 ```
 
 To run the program:
@@ -93,7 +93,7 @@ The arguments are the same as for O2PL.
 To compile:
 
 ```bash
-g++ Source-CO21BTECH11002-BOCC.cpp -o BOCC
+g++ BOCC.cpp -o BOCC
 ```
 
 To run the program:
@@ -111,7 +111,7 @@ The arguments are the same as for O2PL.
 To compile:
 
 ```bash
-g++ Source-CO21BTECH11002-FOCC.cpp -o FOCC
+g++ FOCC.cpp -o FOCC
 ```
 
 To run the program:
